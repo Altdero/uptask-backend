@@ -1,7 +1,7 @@
 import express from 'express';
 
 import authRoutes from '@/routes/authRoutes';
-import projectRoutes from '@/routes/ProjectRoutes';
+import projectRoutes from '@/routes/projectRoutes';
 
 const app = express();
 
