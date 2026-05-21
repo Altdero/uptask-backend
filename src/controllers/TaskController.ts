@@ -25,56 +25,9 @@ export const getProjectTasks = async (req: Request, res: Response) => {
 
 export const getTaskById = async (req: Request, res: Response) => {
   try {
-    const [task] = await Task.aggregate([
-      { $match: { _id: req.task._id } },
-      { $project: { name: 1, description: 1, project: 1, status: 1, notes: 1, createdAt: 1, updatedAt: 1, completedBy: { $slice: ['$completedBy', -5] } } },
-      { $lookup: { from: 'users', localField: 'completedBy.user', foreignField: '_id', as: 'completedByUsers' } },
-      {
-        $addFields: {
-          completedBy: {
-            $map: {
-              input: '$completedBy',
-              as: 'entry',
-              in: {
-                _id: '$$entry._id',
-                status: '$$entry.status',
-                user: {
-                  $let: {
-                    vars: { u: { $arrayElemAt: ['$completedByUsers', { $indexOfArray: ['$completedByUsers._id', '$$entry.user'] }] } },
-                    in: { _id: '$$u._id', name: '$$u.name', email: '$$u.email' },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      { $lookup: { from: 'notes', localField: 'notes', foreignField: '_id', as: 'notes' } },
-      { $lookup: { from: 'users', localField: 'notes.createdBy', foreignField: '_id', as: 'noteAuthors' } },
-      {
-        $addFields: {
-          notes: {
-            $map: {
-              input: '$notes',
-              as: 'note',
-              in: {
-                _id: '$$note._id',
-                content: '$$note.content',
-                task: '$$note.task',
-                createdAt: '$$note.createdAt',
-                createdBy: {
-                  $let: {
-                    vars: { u: { $arrayElemAt: ['$noteAuthors', { $indexOfArray: ['$noteAuthors._id', '$$note.createdBy'] }] } },
-                    in: { _id: '$$u._id', name: '$$u.name', email: '$$u.email' },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      { $project: { completedByUsers: 0, noteAuthors: 0 } },
-    ]);
+    const task = await Task.findById(req.task._id)
+      .populate({ path: 'completedBy.user', select: 'id name email' })
+      .populate({ path: 'notes', populate: { path: 'createdBy', select: 'id name email' } });
     res.json(task);
   } catch {
     res.status(500).json({ error: 'Internal server error' });
