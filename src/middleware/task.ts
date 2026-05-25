@@ -30,7 +30,7 @@ export async function taskExists(req: Request, res: Response, next: NextFunction
 export function taskBelongsToProject(req: Request, res: Response, next: NextFunction) {
   if (req.task.project.toString() !== req.project._id.toString()) {
     const error = new Error('Unauthorized action');
-    return res.status(400).json({ error: error.message });
+    return res.status(403).json({ error: error.message });
   }
   next();
 }
@@ -38,7 +38,7 @@ export function taskBelongsToProject(req: Request, res: Response, next: NextFunc
 export function hasAuthorization(req: Request, res: Response, next: NextFunction) {
   if (req.user._id.toString() !== req.project.manager.toString()) {
     const error = new Error('Unauthorized action');
-    return res.status(400).json({ error: error.message });
+    return res.status(403).json({ error: error.message });
   }
   next();
 }

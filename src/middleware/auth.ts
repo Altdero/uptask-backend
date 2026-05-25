@@ -31,10 +31,10 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         req.user = user;
         next();
       } else {
-        res.status(500).json({ error: 'Invalid token' });
+        res.status(401).json({ error: 'Invalid token' });
       }
     }
   } catch {
-    res.status(500).json({ error: 'Invalid token' });
+    res.status(401).json({ error: 'Invalid token' });
   }
 };

@@ -9,8 +9,8 @@ export const createProject = async (req: Request, res: Response) => {
   try {
     await project.save();
     res.send('Project created successfully');
-  } catch (error) {
-    console.log(error);
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -20,8 +20,8 @@ export const getAllProjects = async (req: Request, res: Response) => {
       $or: [{ manager: req.user._id }, { team: req.user._id }],
     });
     res.json(projects);
-  } catch (error) {
-    console.log(error);
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -35,11 +35,11 @@ export const getProjectById = async (req: Request, res: Response) => {
     }
     if (project.manager.toString() !== req.user._id.toString() && !project.team.includes(req.user._id)) {
       const error = new Error('Unauthorized action');
-      return res.status(404).json({ error: error.message });
+      return res.status(403).json({ error: error.message });
     }
     res.json(project);
-  } catch (error) {
-    console.log(error);
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -51,8 +51,8 @@ export const updateProject = async (req: Request, res: Response) => {
 
     await req.project.save();
     res.send('Project updated');
-  } catch (error) {
-    console.log(error);
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -60,7 +60,7 @@ export const deleteProject = async (req: Request, res: Response) => {
   try {
     await req.project.deleteOne();
     res.send('Project deleted');
-  } catch (error) {
-    console.log(error);
+  } catch {
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
