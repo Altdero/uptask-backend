@@ -17,3 +17,7 @@ There are no tests configured. Type safety is checked via `npm run typecheck`.
 ### Formatting
 
 Prettier with 180-char line width. Run `npm run format` rather than manually adjusting line lengths.
+
+### WebStorm import order
+
+WebStorm's import sorter conflicts with ESLint's import order rules. The project is configured to resolve this via **Actions on Save → Run eslint --fix** and **Code Style → TypeScript → Imports → Sort imports by modules** disabled. Do not fight the ESLint order — it is the source of truth.

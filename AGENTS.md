@@ -59,6 +59,7 @@ src/
 ├── middleware/     # auth.ts, project.ts, task.ts, validation.ts
 ├── models/         # Mongoose schemas — User, Project, Task, Note, Token
 ├── routes/         # authRoutes.ts, projectRoutes.ts, index.ts
+├── validations/    # express-validator rule arrays, one file per resource
 └── utils/          # jwt.ts, auth.ts (hashing), token.ts (OTP)
 ```
 
@@ -79,6 +80,7 @@ All `@/` imports resolve to `src/`:
 | `@/models/*`      | `src/models/*`      |
 | `@/routes/*`      | `src/routes/*`      |
 | `@/utils/*`       | `src/utils/*`       |
+| `@/validations/*` | `src/validations/*` |
 
 Always use `@/` aliases for imports within `src/`. Never use relative paths that cross folder boundaries.
 
@@ -98,6 +100,7 @@ Always use `@/` aliases for imports within `src/`. Never use relative paths that
 - **Functions:** camelCase (`createProject`, `findMemberByEmail`)
 - **Routes:** kebab-case paths (`/create-account`, `/forgot-password`)
 - **Controllers:** one file per resource, all named exports (no classes)
+- **Validations:** one file per resource in `src/validations/`, named `<action>Rules` (e.g. `createProjectRules`). Shared sub-rules (password, projectId, taskId) are defined once and spread into the exported arrays. Route files import these arrays directly — never inline `body()`/`param()` chains in route definitions.
 
 ### Imports order (enforced by ESLint)
 
