@@ -100,7 +100,7 @@ Always use `@/` aliases for imports within `src/`. Never use relative paths that
 - **Functions:** camelCase (`createProject`, `findMemberByEmail`)
 - **Routes:** kebab-case paths (`/create-account`, `/forgot-password`)
 - **Controllers:** one file per resource, all named exports (no classes)
-- **Validations:** one file per resource in `src/validations/`, named `<action>Rules` (e.g. `createProjectRules`). Shared sub-rules (password, projectId, taskId) are defined once and spread into the exported arrays. Route files import these arrays directly — never inline `body()`/`param()` chains in route definitions.
+- **Validations:** one file per resource in `src/validations/`, named `<action>Schema` (e.g. `createProjectSchema`). Each schema is a `{ body?, params? }` object containing Zod schemas. Shared sub-schemas (password, mongoId) are defined once and composed. Route files use `validate(schema)` from `@/middleware/validation` — never inline validation logic in route definitions.
 
 ### Imports order (enforced by ESLint)
 
@@ -119,7 +119,7 @@ Blank line between each group.
 ### Error handling
 
 - **Controller errors:** `res.status(code).json({ error: string })`
-- **Validation errors:** `res.status(400).json({ errors: ValidationError[] })` — handled by `handleInputErrors` middleware
+- **Validation errors:** `res.status(400).json({ errors: { path, message }[] })` — handled by the `validate` middleware factory
 - **Success text responses:** `res.send(string)` for mutations, `res.json(data)` for queries
 - Wrap async controller bodies in try/catch; catch block should always return a response
 
@@ -296,6 +296,46 @@ Used only for email confirmation and password reset flows. Deleted after use.
 **Login:** `login` → verify email + password → if unconfirmed resend token → return JWT (expires in 180 days)
 
 **Password reset:** `forgotPassword` → create OTP token → send email → `validateToken` → `updatePasswordWithToken` → hash new password → delete token
+
+---
+
+## Validation
+
+Validation uses **Zod**. Each schema file exports `{ body?, params? }` objects. The `validate` factory in `middleware/validation.ts` consumes them:
+
+```ts
+// definition
+export const createProjectSchema = { body: projectBody };
+
+// route
+router.post('/', validate(createProjectSchema), createProject);
+```
+
+Shared primitives (`mongoId`, `passwordField`, `emailField`, `passwordWithConfirmation`) are defined once per file and composed into the exported schemas. Transforms (e.g. `.transform(v => v.toLowerCase())`) run on `req.body` assignment — the controller receives the transformed value.
+
+**Error response format:**
+
+```json
+{ "errors": [{ "path": ["fieldName"], "message": "Validation message" }] }
+```
+
+---
+
+## Reference: express-validator pattern
+
+> This project previously used express-validator. Pattern kept for reference in case it's useful in other projects.
+
+Validation rules lived in `src/validations/` as named arrays (`<action>Rules`), imported into routes alongside `handleInputErrors`:
+
+```ts
+// definition
+export const createProjectRules = [body('projectName').notEmpty().withMessage('El Nombre del Proyecto es Obligatorio')];
+
+// route
+router.post('/', createProjectRules, handleInputErrors, createProject);
+```
+
+Shared sub-rules (password, mongoId params) were extracted as constants and spread into exported arrays. `handleInputErrors` middleware called `validationResult(req)` and returned 400 if any errors were found.
 
 ---
 
