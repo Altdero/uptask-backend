@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-const passwordField = z.string().min(8, 'El password es muy corto, minimo 8 caracteres');
-const emailField = z.email('E-mail no válido');
+const passwordField = z.string().min(8, 'Password must be at least 8 characters');
+const emailField = z.email('Invalid email address');
 
 const passwordWithConfirmation = z
   .object({
@@ -10,27 +10,27 @@ const passwordWithConfirmation = z
     password_confirmation: z.string(),
   })
   .refine((data) => data.password === data.password_confirmation, {
-    message: 'Los Password no son iguales',
+    message: 'Passwords do not match',
     path: ['password_confirmation'],
   });
 
 export const createAccountSchema = {
   body: z
     .object({
-      name: z.string().min(1, 'El nombre no puede ir vacio'),
+      name: z.string().min(1, 'Name is required'),
       email: emailField,
     })
     .and(passwordWithConfirmation),
 };
 
 export const confirmAccountSchema = {
-  body: z.object({ token: z.string().min(1, 'El Token no puede ir vacio') }),
+  body: z.object({ token: z.string().min(1, 'Token is required') }),
 };
 
 export const loginSchema = {
   body: z.object({
     email: emailField,
-    password: z.string().min(1, 'El password no puede ir vacio'),
+    password: z.string().min(1, 'Password is required'),
   }),
 };
 
@@ -39,26 +39,26 @@ export const emailSchema = {
 };
 
 export const validateTokenSchema = {
-  body: z.object({ token: z.string().min(1, 'El Token no puede ir vacio') }),
+  body: z.object({ token: z.string().min(1, 'Token is required') }),
 };
 
 export const updatePasswordWithTokenSchema = {
-  params: z.object({ token: z.string().regex(/^\d+$/, 'Token no válido') }),
+  params: z.object({ token: z.string().regex(/^\d+$/, 'Invalid token') }),
   body: passwordWithConfirmation,
 };
 
 export const updateProfileSchema = {
   body: z.object({
-    name: z.string().min(1, 'El nombre no puede ir vacio'),
+    name: z.string().min(1, 'Name is required'),
     email: emailField,
   }),
 };
 
 export const updateCurrentUserPasswordSchema = {
   // eslint-disable-next-line camelcase
-  body: z.object({ current_password: z.string().min(1, 'El password actual no puede ir vacio') }).and(passwordWithConfirmation),
+  body: z.object({ current_password: z.string().min(1, 'Current password is required') }).and(passwordWithConfirmation),
 };
 
 export const verifyPasswordSchema = {
-  body: z.object({ password: z.string().min(1, 'El password no puede ir vacio') }),
+  body: z.object({ password: z.string().min(1, 'Password is required') }),
 };

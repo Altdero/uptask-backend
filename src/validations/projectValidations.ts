@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
-const mongoId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID no válido');
+const mongoId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID');
 
 const projectBody = z.object({
-  projectName: z.string().min(1, 'El Nombre del Proyecto es Obligatorio'),
-  clientName: z.string().min(1, 'El Nombre del Cliente es Obligatorio'),
-  description: z.string().min(1, 'La Descripción del Proyecto es Obligatoria'),
+  projectName: z.string().min(1, 'Project name is required'),
+  clientName: z.string().min(1, 'Client name is required'),
+  description: z.string().min(1, 'Description is required'),
 });
 
 const taskBody = z.object({
-  name: z.string().min(1, 'El Nombre de la tarea es Obligatorio'),
-  description: z.string().min(1, 'La descripción de la tarea es obligatoria'),
+  name: z.string().min(1, 'Task name is required'),
+  description: z.string().min(1, 'Description is required'),
 });
 
 export const getProjectSchema = { params: z.object({ id: mongoId }) };
@@ -24,18 +24,18 @@ export const updateTaskSchema = { params: z.object({ taskId: mongoId }), body: t
 export const deleteTaskSchema = { params: z.object({ taskId: mongoId }) };
 export const updateStatusSchema = {
   params: z.object({ taskId: mongoId }),
-  body: z.object({ status: z.string().min(1, 'El estado es obligatorio') }),
+  body: z.object({ status: z.string().min(1, 'Status is required') }),
 };
 
 export const findTeamMemberSchema = {
   body: z.object({
-    email: z.email('E-mail no válido').transform((v) => v.toLowerCase()),
+    email: z.email('Invalid email address').transform((v) => v.toLowerCase()),
   }),
 };
 export const addTeamMemberSchema = { body: z.object({ id: mongoId }) };
 export const removeTeamMemberSchema = { params: z.object({ userId: mongoId }) };
 
 export const createNoteSchema = {
-  body: z.object({ content: z.string().min(1, 'El Contenido de la nota es obligatorio') }),
+  body: z.object({ content: z.string().min(1, 'Note content is required') }),
 };
 export const deleteNoteSchema = { params: z.object({ noteId: mongoId }) };
