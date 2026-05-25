@@ -1,31 +1,64 @@
-import { body, param } from 'express-validator';
+import { z } from 'zod';
 
-const passwordConfirmation = body('password_confirmation').custom((value, { req }) => {
-  if (value !== req.body.password) throw new Error('Los Password no son iguales');
-  return true;
-});
+const passwordField = z.string().min(8, 'El password es muy corto, minimo 8 caracteres');
+const emailField = z.email('E-mail no válido');
 
-const passwordRules = body('password').isLength({ min: 8 }).withMessage('El password es muy corto, minimo 8 caracteres');
+const passwordWithConfirmation = z
+  .object({
+    password: passwordField,
+    // eslint-disable-next-line camelcase
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'Los Password no son iguales',
+    path: ['password_confirmation'],
+  });
 
-export const createAccountRules = [
-  body('name').notEmpty().withMessage('El nombre no puede ir vacio'),
-  passwordRules,
-  passwordConfirmation,
-  body('email').isEmail().withMessage('E-mail no válido'),
-];
+export const createAccountSchema = {
+  body: z
+    .object({
+      name: z.string().min(1, 'El nombre no puede ir vacio'),
+      email: emailField,
+    })
+    .and(passwordWithConfirmation),
+};
 
-export const confirmAccountRules = [body('token').notEmpty().withMessage('El Token no puede ir vacio')];
+export const confirmAccountSchema = {
+  body: z.object({ token: z.string().min(1, 'El Token no puede ir vacio') }),
+};
 
-export const loginRules = [body('email').isEmail().withMessage('E-mail no válido'), body('password').notEmpty().withMessage('El password no puede ir vacio')];
+export const loginSchema = {
+  body: z.object({
+    email: emailField,
+    password: z.string().min(1, 'El password no puede ir vacio'),
+  }),
+};
 
-export const emailRules = [body('email').isEmail().withMessage('E-mail no válido')];
+export const emailSchema = {
+  body: z.object({ email: emailField }),
+};
 
-export const validateTokenRules = [body('token').notEmpty().withMessage('El Token no puede ir vacio')];
+export const validateTokenSchema = {
+  body: z.object({ token: z.string().min(1, 'El Token no puede ir vacio') }),
+};
 
-export const updatePasswordWithTokenRules = [param('token').isNumeric().withMessage('Token no válido'), passwordRules, passwordConfirmation];
+export const updatePasswordWithTokenSchema = {
+  params: z.object({ token: z.string().regex(/^\d+$/, 'Token no válido') }),
+  body: passwordWithConfirmation,
+};
 
-export const updateProfileRules = [body('name').notEmpty().withMessage('El nombre no puede ir vacio'), body('email').isEmail().withMessage('E-mail no válido')];
+export const updateProfileSchema = {
+  body: z.object({
+    name: z.string().min(1, 'El nombre no puede ir vacio'),
+    email: emailField,
+  }),
+};
 
-export const updateCurrentUserPasswordRules = [body('current_password').notEmpty().withMessage('El password actual no puede ir vacio'), passwordRules, passwordConfirmation];
+export const updateCurrentUserPasswordSchema = {
+  // eslint-disable-next-line camelcase
+  body: z.object({ current_password: z.string().min(1, 'El password actual no puede ir vacio') }).and(passwordWithConfirmation),
+};
 
-export const verifyPasswordRules = [body('password').notEmpty().withMessage('El password no puede ir vacio')];
+export const verifyPasswordSchema = {
+  body: z.object({ password: z.string().min(1, 'El password no puede ir vacio') }),
+};

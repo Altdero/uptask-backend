@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
-import type { Types } from 'mongoose';
 
 import type { INote } from '@/models/Note';
 import Note from '@/models/Note';
 
 type NoteParams = {
-  noteId: Types.ObjectId;
+  noteId: string;
 };
 
 export const createNote = async (req: Request<object, object, INote>, res: Response) => {

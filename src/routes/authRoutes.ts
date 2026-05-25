@@ -14,34 +14,34 @@ import {
   verifyPassword,
 } from '@/controllers/AuthController';
 import { authenticate } from '@/middleware/auth';
-import { handleInputErrors } from '@/middleware/validation';
+import { validate } from '@/middleware/validation';
 import {
-  confirmAccountRules,
-  createAccountRules,
-  emailRules,
-  loginRules,
-  updateCurrentUserPasswordRules,
-  updatePasswordWithTokenRules,
-  updateProfileRules,
-  validateTokenRules,
-  verifyPasswordRules,
+  confirmAccountSchema,
+  createAccountSchema,
+  emailSchema,
+  loginSchema,
+  updateCurrentUserPasswordSchema,
+  updatePasswordWithTokenSchema,
+  updateProfileSchema,
+  validateTokenSchema,
+  verifyPasswordSchema,
 } from '@/validations/authValidations';
 
 const router = Router();
 
-router.post('/create-account', createAccountRules, handleInputErrors, createAccount);
-router.post('/confirm-account', confirmAccountRules, handleInputErrors, confirmAccount);
-router.post('/login', loginRules, handleInputErrors, login);
-router.post('/request-code', emailRules, handleInputErrors, requestConfirmationCode);
-router.post('/forgot-password', emailRules, handleInputErrors, forgotPassword);
-router.post('/validate-token', validateTokenRules, handleInputErrors, validateToken);
-router.post('/update-password/:token', updatePasswordWithTokenRules, handleInputErrors, updatePasswordWithToken);
+router.post('/create-account', validate(createAccountSchema), createAccount);
+router.post('/confirm-account', validate(confirmAccountSchema), confirmAccount);
+router.post('/login', validate(loginSchema), login);
+router.post('/request-code', validate(emailSchema), requestConfirmationCode);
+router.post('/forgot-password', validate(emailSchema), forgotPassword);
+router.post('/validate-token', validate(validateTokenSchema), validateToken);
+router.post('/update-password/:token', validate(updatePasswordWithTokenSchema), updatePasswordWithToken);
 
 router.get('/user', authenticate, getUser);
 
 /** Profile */
-router.put('/profile', authenticate, updateProfileRules, handleInputErrors, updateProfile);
-router.post('/update-password', authenticate, updateCurrentUserPasswordRules, handleInputErrors, updateCurrentUserPassword);
-router.post('/check-password', authenticate, verifyPasswordRules, handleInputErrors, verifyPassword);
+router.put('/profile', authenticate, validate(updateProfileSchema), updateProfile);
+router.post('/update-password', authenticate, validate(updateCurrentUserPasswordSchema), updateCurrentUserPassword);
+router.post('/check-password', authenticate, validate(verifyPasswordSchema), verifyPassword);
 
 export default router;
