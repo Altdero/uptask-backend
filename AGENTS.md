@@ -341,11 +341,4 @@ Shared sub-rules (password, mongoId params) were extracted as constants and spre
 
 ## Known Issues
 
-These exist in the original codebase — fix only when in scope:
-
-- `auth` middleware returns 500 (instead of 401) for invalid/expired tokens
-- `ProjectController` catch blocks log to console but don't always return a response
-- `dbConnection.ts` is dead code (duplicate of `db.ts`, never imported)
-- `IToken` interface declares `createdAt` but schema uses `expiresAt`
-- Validation messages are in Spanish; success/error messages are in English
-- `hasAuthorization` returns 400 (instead of 403) for non-manager access
+No known issues.
