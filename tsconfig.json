@@ -18,7 +18,8 @@
       "@/middleware/*": ["./src/middleware/*"],
       "@/models/*": ["./src/models/*"],
       "@/routes/*": ["./src/routes/*"],
-      "@/utils/*": ["./src/utils/*"]
+      "@/utils/*": ["./src/utils/*"],
+      "@/validations/*": ["./src/validations/*"]
     }
   },
   "ts-node": {
