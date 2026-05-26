@@ -55,8 +55,14 @@ export const updateProfileSchema = {
 };
 
 export const updateCurrentUserPasswordSchema = {
-  // eslint-disable-next-line camelcase
-  body: z.object({ current_password: z.string().min(1, 'Current password is required') }).and(passwordWithConfirmation),
+  body: z
+    // eslint-disable-next-line camelcase
+    .object({ current_password: z.string().min(1, 'Current password is required') })
+    .and(passwordWithConfirmation)
+    .refine((data) => data.current_password !== data.password, {
+      message: 'New password must be different from current password',
+      path: ['password'],
+    }),
 };
 
 export const verifyPasswordSchema = {
