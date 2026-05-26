@@ -59,11 +59,9 @@ src/
 ├── middleware/     # auth.ts, project.ts, task.ts, validation.ts
 ├── models/         # Mongoose schemas — User, Project, Task, Note, Token
 ├── routes/         # authRoutes.ts, projectRoutes.ts, index.ts
-├── validations/    # express-validator rule arrays, one file per resource
+├── validations/    # Zod schema objects, one file per resource
 └── utils/          # jwt.ts, auth.ts (hashing), token.ts (OTP)
 ```
-
-> `src/config/dbConnection.ts` is a duplicate of `db.ts` — it exists but is unused.
 
 ---
 
@@ -142,7 +140,7 @@ Loads project from DB using `:projectId` param. Attaches `req.project`. Returns 
 
 ### `hasAuthorization` (`middleware/task.ts`)
 
-Checks `req.user._id === req.project.manager._id`. Returns 400 if not the manager.
+Checks `req.user._id === req.project.manager._id`. Returns 403 if not the manager.
 
 ### `taskExists` (`middleware/task.ts`)
 
@@ -150,11 +148,11 @@ Loads task from DB using `:taskId` param. Attaches `req.task`. Returns 404 if no
 
 ### `taskBelongsToProject` (`middleware/task.ts`)
 
-Validates `req.task.project === req.project._id`. Returns 400 if mismatch.
+Validates `req.task.project === req.project._id`. Returns 403 if mismatch.
 
-### `handleInputErrors` (`middleware/validation.ts`)
+### `validate` (`middleware/validation.ts`)
 
-Runs after `express-validator` chains. Returns 400 with `{ errors }` array if any validation failed.
+Factory that accepts a `{ body?, params? }` Zod schema map. Runs each schema's `safeParse`, collects all issues, and returns 400 with `{ errors: { path, message }[] }` if any fail. On success, assigns the parsed (and transformed) value back to `req.body`.
 
 ---
 

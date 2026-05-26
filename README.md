@@ -8,7 +8,7 @@ REST API for UpTask, a project management app inspired by tools like Jira. Users
 - **MongoDB** via Mongoose
 - **JWT** for authentication
 - **Nodemailer** for transactional emails (account confirmation, password reset)
-- **express-validator** for request validation
+- **Zod** for request validation
 
 ## Getting Started
 
@@ -25,31 +25,31 @@ npm run dev
 
 ### Environment Variables
 
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | MongoDB Atlas connection string |
+| Variable       | Description                                             |
+| -------------- | ------------------------------------------------------- |
+| `DATABASE_URL` | MongoDB Atlas connection string                         |
 | `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:3000`) |
-| `JWT_SECRET` | Secret for signing JWTs |
-| `SMTP_HOST` | Nodemailer SMTP host |
-| `SMTP_PORT` | Nodemailer SMTP port |
-| `SMTP_USER` | Nodemailer SMTP username |
-| `SMTP_PASS` | Nodemailer SMTP password |
+| `JWT_SECRET`   | Secret for signing JWTs                                 |
+| `SMTP_HOST`    | Nodemailer SMTP host                                    |
+| `SMTP_PORT`    | Nodemailer SMTP port                                    |
+| `SMTP_USER`    | Nodemailer SMTP username                                |
+| `SMTP_PASS`    | Nodemailer SMTP password                                |
 
 ## API Overview
 
-| Resource | Endpoints |
-|---|---|
-| Auth | `POST/GET /api/auth/*` — register, login, confirm email, password reset, profile |
-| Projects | `GET/POST/PUT/DELETE /api/projects` |
-| Tasks | `/api/projects/:projectId/tasks/*` |
-| Team | `/api/projects/:projectId/team/*` |
-| Notes | `/api/projects/:projectId/tasks/:taskId/notes/*` |
+| Resource | Endpoints                                                                        |
+| -------- | -------------------------------------------------------------------------------- |
+| Auth     | `POST/GET /api/auth/*` — register, login, confirm email, password reset, profile |
+| Projects | `GET/POST/PUT/DELETE /api/projects`                                              |
+| Tasks    | `/api/projects/:projectId/tasks/*`                                               |
+| Team     | `/api/projects/:projectId/team/*`                                                |
+| Notes    | `/api/projects/:projectId/tasks/:taskId/notes/*`                                 |
 
 All project/task routes require a valid JWT (`Authorization: Bearer <token>`).
 
 ## Task Statuses
 
-`pending` → `on_hold` → `in_progress` → `under_review` → `completed`
+`pending` → `onHold` → `inProgress` → `underReview` → `completed`
 
 ## Project Roles
 
@@ -60,8 +60,11 @@ All project/task routes require a valid JWT (`Authorization: Bearer <token>`).
 
 ```bash
 npm run dev        # Dev server with nodemon + ts-node (port 4000)
+npm run dev:api    # Same + --api flag (enables CORS for REST clients like Postman)
 npm run build      # Compile TypeScript to dist/
 npm run start      # Run compiled output (production)
+npm run typecheck  # tsc --noEmit
+npm run validate   # lint + typecheck
 npm run lint       # ESLint
 npm run lint:fix   # Auto-fix lint issues
 npm run format     # Prettier
