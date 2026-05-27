@@ -6,7 +6,7 @@ Project documentation for AI agents working on this codebase.
 
 UpTask is a Jira-like project management REST API. Users create projects, manage tasks through a defined workflow, collaborate with team members, and leave notes on tasks. This is a back-end-only service built as a reference for a separate front-end.
 
-**Stack:** Express 5 · TypeScript · MongoDB (Mongoose) · JWT · Nodemailer  
+**Stack:** Express 5 · TypeScript · MongoDB (Mongoose) · JWT · Nodemailer · Swagger UI  
 **Port:** 4000 (dev) · Entry: `src/index.ts` → `src/server.ts`
 
 ---
@@ -15,7 +15,6 @@ UpTask is a Jira-like project management REST API. Users create projects, manage
 
 ```bash
 npm run dev        # Dev server with nodemon + ts-node
-npm run dev:api    # Same + --api flag (enables CORS for REST clients like Postman)
 npm run build      # Compile TypeScript to dist/
 npm run start      # Run compiled output
 npm run typecheck  # tsc --noEmit
@@ -31,15 +30,17 @@ npm run format     # Prettier
 
 Copy `.env.example` to `.env`:
 
-| Variable       | Description                                        |
-| -------------- | -------------------------------------------------- |
-| `DATABASE_URL` | MongoDB Atlas connection string                    |
-| `FRONTEND_URL` | Allowed CORS origin (e.g. `http://localhost:3000`) |
-| `JWT_SECRET`   | Secret for signing JWTs                            |
-| `SMTP_HOST`    | Nodemailer SMTP host                               |
-| `SMTP_PORT`    | Nodemailer SMTP port                               |
-| `SMTP_USER`    | Nodemailer SMTP user                               |
-| `SMTP_PASS`    | Nodemailer SMTP password                           |
+| Variable       | Description                                                                        |
+| -------------- | ---------------------------------------------------------------------------------- |
+| `NODE_ENV`     | Runtime environment (`development` or `production`) — controls CORS permissiveness |
+| `DATABASE_URL` | MongoDB Atlas connection string                                                    |
+| `FRONTEND_URL` | Allowed CORS origin (e.g. `http://localhost:3000`)                                 |
+| `BACKEND_URL`  | Server's own origin — whitelisted in CORS and used as the Swagger server URL       |
+| `JWT_SECRET`   | Secret for signing JWTs                                                            |
+| `SMTP_HOST`    | Nodemailer SMTP host                                                               |
+| `SMTP_PORT`    | Nodemailer SMTP port                                                               |
+| `SMTP_USER`    | Nodemailer SMTP user                                                               |
+| `SMTP_PASS`    | Nodemailer SMTP password                                                           |
 
 Default SMTP in `.env.example` points to Mailtrap sandbox.
 
@@ -53,7 +54,7 @@ Default SMTP in `.env.example` points to Mailtrap sandbox.
 
 ```
 src/
-├── config/         # db.ts, cors.ts, nodemailer.ts
+├── config/         # db.ts, cors.ts, nodemailer.ts, swagger.ts
 ├── controllers/    # Named export functions, one file per resource
 ├── emails/         # AuthEmail.ts — email template logic
 ├── middleware/     # auth.ts, project.ts, task.ts, validation.ts
@@ -228,6 +229,8 @@ Used only for email confirmation and password reset flows. Deleted after use.
 ---
 
 ## API Surface
+
+Interactive docs: `GET /api/docs` — Swagger UI. Available in both dev and production.
 
 ### Auth — `/api/auth`
 

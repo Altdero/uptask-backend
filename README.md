@@ -9,6 +9,7 @@ REST API for UpTask, a project management app inspired by tools like Jira. Users
 - **JWT** for authentication
 - **Nodemailer** for transactional emails (account confirmation, password reset)
 - **Zod** for request validation
+- **Swagger UI** (`swagger-jsdoc` + `swagger-ui-express`) for API docs
 
 ## Getting Started
 
@@ -25,15 +26,17 @@ npm run dev
 
 ### Environment Variables
 
-| Variable       | Description                                             |
-| -------------- | ------------------------------------------------------- |
-| `DATABASE_URL` | MongoDB Atlas connection string                         |
-| `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:3000`) |
-| `JWT_SECRET`   | Secret for signing JWTs                                 |
-| `SMTP_HOST`    | Nodemailer SMTP host                                    |
-| `SMTP_PORT`    | Nodemailer SMTP port                                    |
-| `SMTP_USER`    | Nodemailer SMTP username                                |
-| `SMTP_PASS`    | Nodemailer SMTP password                                |
+| Variable       | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| `NODE_ENV`     | Runtime environment (`development` or `production`)        |
+| `DATABASE_URL` | MongoDB Atlas connection string                            |
+| `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:3000`)    |
+| `BACKEND_URL`  | Server's own origin — used for CORS and Swagger server URL |
+| `JWT_SECRET`   | Secret for signing JWTs                                    |
+| `SMTP_HOST`    | Nodemailer SMTP host                                       |
+| `SMTP_PORT`    | Nodemailer SMTP port                                       |
+| `SMTP_USER`    | Nodemailer SMTP username                                   |
+| `SMTP_PASS`    | Nodemailer SMTP password                                   |
 
 ## API Overview
 
@@ -46,6 +49,8 @@ npm run dev
 | Notes    | `/api/projects/:projectId/tasks/:taskId/notes/*`                                 |
 
 All project/task routes require a valid JWT (`Authorization: Bearer <token>`).
+
+Interactive API docs are available at `GET /api/docs`.
 
 ## Task Statuses
 
@@ -60,7 +65,6 @@ All project/task routes require a valid JWT (`Authorization: Bearer <token>`).
 
 ```bash
 npm run dev        # Dev server with nodemon + ts-node (port 4000)
-npm run dev:api    # Same + --api flag (enables CORS for REST clients like Postman)
 npm run build      # Compile TypeScript to dist/
 npm run start      # Run compiled output (production)
 npm run typecheck  # tsc --noEmit
