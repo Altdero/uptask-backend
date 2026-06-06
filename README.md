@@ -67,6 +67,7 @@ Interactive API docs are available at `GET /api/docs`.
 npm run dev        # Dev server with nodemon + ts-node (port 4000)
 npm run build      # Compile TypeScript to dist/
 npm run start      # Run compiled output (production)
+npm run seed       # Seed demo user, projects, tasks, and notes (idempotent)
 npm run typecheck  # tsc --noEmit
 npm run validate   # lint + typecheck
 npm run lint       # ESLint

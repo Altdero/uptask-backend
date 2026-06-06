@@ -17,6 +17,7 @@ UpTask is a Jira-like project management REST API. Users create projects, manage
 npm run dev        # Dev server with nodemon + ts-node
 npm run build      # Compile TypeScript to dist/
 npm run start      # Run compiled output
+npm run seed       # Seed demo user, projects, tasks, and notes (idempotent)
 npm run typecheck  # tsc --noEmit
 npm run validate   # lint + typecheck
 npm run lint       # ESLint
